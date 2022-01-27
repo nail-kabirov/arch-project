@@ -1,0 +1,204 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Auth Service
+servers:
+  - description: Default Host URL
+    url: http://arch.homework/auth
+tags:
+  - name: auth
+    description: Internal user auth operations
+  - name: session
+    description: User session operations
+paths:
+  /internal/api/v1/register:
+    post:
+      tags:
+        - auth
+      summary: register user (internal operation)
+      operationId: registerUser
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserId'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAuthData'
+            examples:
+              sample-user:
+                summary: Example
+                value:
+                  login: user1
+                  password: user1-pwd
+        required: true
+  /internal/api/v1/user/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+          format: uuid
+    delete:
+      tags:
+        - auth
+      summary: remove user (internal operation)
+      operationId: internalRemoveUser
+      responses:
+        '200':
+          description: successfull response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /internal/api/v1/auth:
+    get:
+      tags:
+        - auth
+      summary: authenticate user
+      operationId: authUserGet
+      responses:
+        '200':
+          description: successfull response
+        '401':
+          description: unauthorized response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - auth
+      summary: authenticate user
+      operationId: authUserPost
+      responses:
+        '200':
+          description: successfull response
+        '401':
+          description: unauthorized response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - auth
+      summary: authenticate user
+      operationId: authUserPut
+      responses:
+        '200':
+          description: successfull response
+        '401':
+          description: unauthorized response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - auth
+      summary: authenticate user
+      operationId: authUserDelete
+      responses:
+        '200':
+          description: successfull response
+        '401':
+          description: unauthorized response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/login:
+    post:
+      tags:
+        - session
+      summary: login user
+      operationId: loginUser
+      responses:
+        '200':
+          description: successfull response
+        '400':
+          description: bad request
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserAuthData'
+            examples:
+              sample-user:
+                summary: Example
+                value:
+                  login: user1
+                  password: user1-pwd
+        required: true
+  /api/v1/logout:
+    post:
+      tags:
+        - session
+      summary: logout user
+      operationId: logoutUser
+      responses:
+        '200':
+          description: successfull response
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    UserId:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    UserAuthData:
+      type: object
+      properties:
+        login:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

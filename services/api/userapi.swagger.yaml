@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: User Service
+servers:
+  - description: Default Host URL
+    url: http://arch.homework/user
+tags:
+  - name: user
+    description: Operations about user
+  - name: internal
+    description: Internal operations
+
+paths:
+  /api/v1/register:
+    post:
+      tags:
+        - user
+      summary: register user (internal operation)
+      operationId: registerUser
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserId'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserData'
+        required: true
+  /api/v1/user/profile:
+    get:
+      tags:
+        - user
+      operationId: getUserProfile
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - user
+      operationId: updateUserProfile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: user updated
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /internal/api/v1/user/{userId}/profile:
+    parameters:
+      - name: userId
+        in: path
+        description: ID of user
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - internal
+      operationId: internalGetUserProfile
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    UserId:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+    RegisterUserData:
+      type: object
+      required:
+        - login
+        - password
+        - firstName
+        - lastName
+        - email
+        - address
+      properties:
+        login:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+    UserAuthData:
+      type: object
+      properties:
+        login:
+          type: string
+          maxLength: 255
+        password:
+          type: string
+    User:
+      type: object
+      required:
+        - id
+        - login
+        - firstName
+        - lastName
+        - email
+        - address
+      properties:
+        id:
+          type: string
+          format: uuid
+        login:
+          type: string
+          maxLength: 255
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+    UpdateUser:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          type: string
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
