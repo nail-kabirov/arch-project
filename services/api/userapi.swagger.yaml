@@ -16,7 +16,7 @@ paths:
     post:
       tags:
         - user
-      summary: register user (internal operation)
+      summary: register user
       operationId: registerUser
       responses:
         '200':

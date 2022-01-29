@@ -50,7 +50,7 @@ func (client *httpClient) MakeJSONRequest(request, response interface{}, method,
 		return err
 	}
 
-	if len(resBody) > 0 {
+	if response != nil && len(resBody) > 0 {
 		return errors.WithStack(json.Unmarshal(resBody, response))
 	}
 	return nil
@@ -61,7 +61,9 @@ func (client *httpClient) makeRequest(bodyReader io.Reader, contentType, method,
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
-	req.Header.Set("Content-Type", contentType)
+	if bodyReader != nil {
+		req.Header.Set("Content-Type", contentType)
+	}
 
 	res, err := client.client.Do(req)
 	if err != nil {
