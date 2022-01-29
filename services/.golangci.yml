@@ -1,0 +1,37 @@
+linters:
+  enable:
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - gochecknoinits
+    - gocognit
+    - gocritic
+    - gocyclo
+    - gofmt
+    - goimports
+    - golint
+    - maligned
+    - misspell
+    - nakedret
+    - prealloc
+    - scopelint
+    - stylecheck
+    - unconvert
+    - whitespace
+    - rowserrcheck
+    - goconst
+    - asciicheck
+    - nestif
+    - exportloopref
+    - sqlclosecheck
