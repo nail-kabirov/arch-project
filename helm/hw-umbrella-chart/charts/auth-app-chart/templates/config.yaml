@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config.configMapName }}
+data:
+  DB_HOST: "{{ include "postgresql.fullname" . }}"
+  DB_PORT: "{{ .Values.postgresql.servicePort }}"
+  DB_NAME: "{{ .Values.postgresql.postgresqlDatabase }}"
+  DB_USER: "{{ .Values.postgresql.postgresqlUsername }}"
+  REDIS_HOST: "{{ include "redis.fullname" . }}"
+  REDIS_PORT: "{{ .Values.redis.port }}"
+  REDIS_PASSWORD: "{{ .Values.redis.password }}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.config.secretName }}
+type: Opaque
+data:
+  DB_PASSWORD: {{ .Values.postgresql.postgresqlPassword | b64enc | quote }}

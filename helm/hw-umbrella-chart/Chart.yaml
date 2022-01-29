@@ -1,0 +1,21 @@
+apiVersion: v2
+name: hw-umbrella-chart
+description: Umbrella chart for homework
+
+version: 0.1.0
+
+dependencies:
+  - name: postgresql
+    version: 10.x.x
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - app-database
+  - name: traefik
+    version: 10.x.x
+    repository: https://helm.traefik.io/traefik
+  - name: rabbitmq
+    version: 8.x.x
+    repository: https://charts.bitnami.com/bitnami
+  - name: redis
+    version: 15.x.x
+    repository: https://charts.bitnami.com/bitnami

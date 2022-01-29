@@ -1,0 +1,130 @@
+# Default values for hw-umbrella-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ingress:
+  enabled: true
+  host: arch.homework
+
+traefik:
+  nameOverride: traefik
+  fullnameOverride: traefik
+  #  deployment:
+  #    kind: DaemonSet
+  providers:
+    kubernetesCRD:
+      enabled: true
+    kubernetesIngress:
+      enabled: false
+  ports:
+    websecure:
+      expose: false
+  logs:
+    general:
+      level: DEBUG
+    access:
+      enabled: true
+  ingressRoute:
+    dashboard:
+      enabled: false
+#  securityContext:
+#    runAsNonRoot: false
+
+postgresql:
+  initdbScriptsConfigMap: "postgresql-init-scripts-cm"
+  service:
+    port: "5433"
+  metrics:
+    enabled: false
+    serviceMonitor:
+      enabled: false
+
+rabbitmq:
+  auth:
+    username: rmq_user
+    password: rmq_pwd
+    erlangCookie: auth_erlang_cookie
+  extraPlugins: "rabbitmq_stream,rabbitmq_stream_management "
+  extraContainerPorts:
+  - name: stream-port
+    containerPort: 5552
+  service:
+    type: NodePort
+    managerNodePort: 30672
+    extraPorts:
+    - name: stream
+      port: 5552
+      targetPort: 5552
+
+redis:
+  auth:
+    password: redis-pwd
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+
+auth-app-chart:
+  postgresql:
+    postgresqlUsername: auth_user
+    postgresqlPassword: auth-pwd
+    postgresqlDatabase: auth_db
+    servicePort: "5433"
+  redis:
+    port: "6379"
+    password: redis-pwd
+
+billing-app-chart:
+  postgresql:
+    postgresqlUsername: billing_user
+    postgresqlPassword: billing-pwd
+    postgresqlDatabase: billing_db
+    servicePort: "5433"
+  rabbitmq:
+    port: "5552"
+    user: rmq_user
+    password: rmq_pwd
+
+delivery-app-chart:
+  postgresql:
+    postgresqlUsername: delivery_user
+    postgresqlPassword: delivery-pwd
+    postgresqlDatabase: delivery_db
+    servicePort: "5433"
+  rabbitmq:
+    port: "5552"
+    user: rmq_user
+    password: rmq_pwd
+
+lot-app-chart:
+  postgresql:
+    postgresqlUsername: lot_user
+    postgresqlPassword: lot-pwd
+    postgresqlDatabase: lot_db
+    servicePort: "5433"
+  rabbitmq:
+    port: "5552"
+    user: rmq_user
+    password: rmq_pwd
+
+notification-app-chart:
+  postgresql:
+    postgresqlUsername: notification_user
+    postgresqlPassword: notification-pwd
+    postgresqlDatabase: notification_db
+    servicePort: "5433"
+  rabbitmq:
+    port: "5552"
+    user: rmq_user
+    password: rmq_pwd
+
+user-app-chart:
+  postgresql:
+    postgresqlUsername: user_user
+    postgresqlPassword: user-pwd
+    postgresqlDatabase: user_db
+    servicePort: "5433"
+  rabbitmq:
+    port: "5552"
+    user: rmq_user
+    password: rmq_pwd

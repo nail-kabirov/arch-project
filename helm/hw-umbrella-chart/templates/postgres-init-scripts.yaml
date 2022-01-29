@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.postgresql.initdbScriptsConfigMap }}
+data:
+  init_script.sql: |
+    CREATE USER {{ index .Values "auth-app-chart" "postgresql" "postgresqlUsername" }} WITH PASSWORD '{{ index .Values "auth-app-chart" "postgresql" "postgresqlPassword" }}';
+    CREATE DATABASE {{ index .Values "auth-app-chart" "postgresql" "postgresqlDatabase" }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ index .Values "auth-app-chart" "postgresql" "postgresqlDatabase" }} TO {{ index .Values "auth-app-chart" "postgresql" "postgresqlUsername" }};
+
+    CREATE USER {{ index .Values "billing-app-chart" "postgresql" "postgresqlUsername" }} WITH PASSWORD '{{ index .Values "billing-app-chart" "postgresql" "postgresqlPassword" }}';
+    CREATE DATABASE {{ index .Values "billing-app-chart" "postgresql" "postgresqlDatabase" }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ index .Values "billing-app-chart" "postgresql" "postgresqlDatabase" }} TO {{ index .Values "billing-app-chart" "postgresql" "postgresqlUsername" }};
+
+    CREATE USER {{ index .Values "delivery-app-chart" "postgresql" "postgresqlUsername" }} WITH PASSWORD '{{ index .Values "delivery-app-chart" "postgresql" "postgresqlPassword" }}';
+    CREATE DATABASE {{ index .Values "delivery-app-chart" "postgresql" "postgresqlDatabase" }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ index .Values "delivery-app-chart" "postgresql" "postgresqlDatabase" }} TO {{ index .Values "delivery-app-chart" "postgresql" "postgresqlUsername" }};
+
+    CREATE USER {{ index .Values "lot-app-chart" "postgresql" "postgresqlUsername" }} WITH PASSWORD '{{ index .Values "lot-app-chart" "postgresql" "postgresqlPassword" }}';
+    CREATE DATABASE {{ index .Values "lot-app-chart" "postgresql" "postgresqlDatabase" }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ index .Values "lot-app-chart" "postgresql" "postgresqlDatabase" }} TO {{ index .Values "lot-app-chart" "postgresql" "postgresqlUsername" }};
+
+    CREATE USER {{ index .Values "notification-app-chart" "postgresql" "postgresqlUsername" }} WITH PASSWORD '{{ index .Values "notification-app-chart" "postgresql" "postgresqlPassword" }}';
+    CREATE DATABASE {{ index .Values "notification-app-chart" "postgresql" "postgresqlDatabase" }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ index .Values "notification-app-chart" "postgresql" "postgresqlDatabase" }} TO {{ index .Values "notification-app-chart" "postgresql" "postgresqlUsername" }};
+
+    CREATE USER {{ index .Values "user-app-chart" "postgresql" "postgresqlUsername" }} WITH PASSWORD '{{ index .Values "user-app-chart" "postgresql" "postgresqlPassword" }}';
+    CREATE DATABASE {{ index .Values "user-app-chart" "postgresql" "postgresqlDatabase" }};
+    GRANT ALL PRIVILEGES ON DATABASE {{ index .Values "user-app-chart" "postgresql" "postgresqlDatabase" }} TO {{ index .Values "user-app-chart" "postgresql" "postgresqlUsername" }};

@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.init_migrations_job.name }}
+  labels:
+    app: {{ .Values.init_migrations_job.name }}
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      name: {{ .Values.init_migrations_job.name }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ .Values.init_migrations_job.name }}
+          image: postgres:latest
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.config.configMapName }}
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.secretName }}
+                  key: DB_PASSWORD
+          command:
+            - sh
+            - "-c"
+            - |
+              PGCONNECT_TIMEOUT=5 psql postgresql://$DB_USER@$DB_HOST:$DB_PORT/$DB_NAME <<'EOF'
+                CREATE TABLE IF NOT EXISTS auth_user
+                (
+                  id       UUID primary key,
+                  login    varchar(255) UNIQUE NOT NULL,
+                  password varchar             NOT NULL
+                );                
+              EOF

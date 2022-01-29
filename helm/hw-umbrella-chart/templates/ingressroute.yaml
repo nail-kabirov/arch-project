@@ -1,0 +1,18 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: auth-routes
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: PathPrefix(`/auth/api/`)
+      services:
+        - name: {{ index .Values "auth-app-chart" "fullnameOverride" }}
+          namespace: {{ .Release.Namespace }}
+          port: {{ index .Values "auth-app-chart" "service" "port" }}
+      middlewares:
+        - name: strip-service-prefixes
+          namespace: {{ .Release.Namespace }}
+

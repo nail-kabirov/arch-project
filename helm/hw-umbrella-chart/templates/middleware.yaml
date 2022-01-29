@@ -1,0 +1,24 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-service-prefixes
+spec:
+  stripPrefix:
+    prefixes:
+      - /auth
+      - /billing
+      - /delivery
+      - /lot
+      - /notification
+      - /user
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: authentication
+spec:
+  forwardAuth:
+    address: http://{{ index .Values "auth-app-chart" "fullnameOverride" }}.{{ .Release.Namespace }}.svc.cluster.local:{{ index .Values "auth-app-chart" "service" "port" }}/internal/api/v1/auth
+    authResponseHeaders:
+      - x-auth-token
