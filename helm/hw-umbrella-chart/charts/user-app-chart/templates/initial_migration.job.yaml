@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.init_migrations_job.name }}
+  labels:
+    app: {{ .Values.init_migrations_job.name }}
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      name: {{ .Values.init_migrations_job.name }}
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ .Values.init_migrations_job.name }}
+          image: postgres:latest
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.config.configMapName }}
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.config.secretName }}
+                  key: DB_PASSWORD
+          command:
+            - sh
+            - "-c"
+            - |
+              PGCONNECT_TIMEOUT=5 psql postgresql://$DB_USER@$DB_HOST:$DB_PORT/$DB_NAME <<'EOF'
+                CREATE TABLE IF NOT EXISTS user_profile
+                (
+                  id         UUID primary key,
+                  login      varchar(255) UNIQUE NOT NULL,
+                  first_name varchar             NOT NULL,
+                  last_name  varchar             NOT NULL,
+                  email      varchar UNIQUE      NOT NULL,
+                  address    varchar             NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS processed_request
+                (
+                  uid UUID PRIMARY KEY
+                );
+                CREATE TABLE IF NOT EXISTS stored_event
+                (
+                  id         serial PRIMARY KEY,
+                  uid        UUID      NOT NULL,
+                  type       varchar   NOT NULL,
+                  body       varchar   NOT NULL,
+                  confirmed  bool      NOT NULL DEFAULT FALSE,
+                  created_at timestamp NOT NULL DEFAULT NOW(),
+                  CONSTRAINT uid_idx UNIQUE (uid)
+                );
+              EOF

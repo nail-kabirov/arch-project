@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "auth-app-chart.name" -}}
+{{- define "user-app-chart.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "auth-app-chart.fullname" -}}
+{{- define "user-app-chart.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "auth-app-chart.chart" -}}
+{{- define "user-app-chart.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "auth-app-chart.labels" -}}
-helm.sh/chart: {{ include "auth-app-chart.chart" . }}
-{{ include "auth-app-chart.selectorLabels" . }}
+{{- define "user-app-chart.labels" -}}
+helm.sh/chart: {{ include "user-app-chart.chart" . }}
+{{ include "user-app-chart.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "auth-app-chart.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "auth-app-chart.name" . }}
+{{- define "user-app-chart.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "user-app-chart.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "auth-app-chart.serviceAccountName" -}}
+{{- define "user-app-chart.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "auth-app-chart.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "user-app-chart.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
@@ -65,6 +65,6 @@ Create the name of the service account to use
 {{- printf "%s-%s" .Release.Name "postgresql" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "redis.svcname" -}}
-{{- printf "%s-%s-master" .Release.Name "redis" | trunc 63 | trimSuffix "-" -}}
+{{- define "rabbitmq.svcname" -}}
+{{- printf "%s-%s" .Release.Name "rabbitmq" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

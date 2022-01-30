@@ -15,4 +15,23 @@ spec:
       middlewares:
         - name: strip-service-prefixes
           namespace: {{ .Release.Namespace }}
-
+    - kind: Rule
+      match: PathPrefix(`/user/api/v1/register`)
+      services:
+        - name: {{ index .Values "user-app-chart" "fullnameOverride" }}
+          namespace: {{ .Release.Namespace }}
+          port: {{ index .Values "user-app-chart" "service" "port" }}
+      middlewares:
+        - name: strip-service-prefixes
+          namespace: {{ .Release.Namespace }}
+    - kind: Rule
+      match: PathPrefix(`/user/api/`)
+      services:
+        - name: {{ index .Values "user-app-chart" "fullnameOverride" }}
+          namespace: {{ .Release.Namespace }}
+          port: {{ index .Values "user-app-chart" "service" "port" }}
+      middlewares:
+        - name: strip-service-prefixes
+          namespace: {{ .Release.Namespace }}
+        - name: authentication
+          namespace: {{ .Release.Namespace }}
