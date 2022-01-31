@@ -13,8 +13,8 @@ func parseEnv() (*config, error) {
 	if c.DBHost == "" || c.DBPort == "" || c.DBName == "" || c.DBUser == "" || c.DBPassword == "" {
 		return c, errors.New("db env params not set")
 	}
-	if c.RedisHost == "" || c.RedisPort == "" || c.RedisPassword == "" {
-		return c, errors.New("redis env params not set")
+	if c.RMQHost == "" || c.RMQPort == "" || c.RMQUser == "" || c.RMQPassword == "" {
+		return c, errors.New("rabbit mq env params not set")
 	}
 	return c, nil
 }
@@ -25,11 +25,12 @@ type config struct {
 
 	DBHost     string `envconfig:"db_host" default:"localhost"`
 	DBPort     string `envconfig:"db_port" default:"5433"`
-	DBName     string `envconfig:"db_name" default:"auth_db"`
-	DBUser     string `envconfig:"db_user" default:"auth_user"`
-	DBPassword string `envconfig:"db_password" default:"auth-pwd"`
+	DBName     string `envconfig:"db_name" default:"billing_db"`
+	DBUser     string `envconfig:"db_user" default:"billing_user"`
+	DBPassword string `envconfig:"db_password" default:"billing-pwd"`
 
-	RedisHost     string `envconfig:"redis_host" default:"localhost"`
-	RedisPort     string `envconfig:"redis_port" default:"6379"`
-	RedisPassword string `envconfig:"redis_password" default:"redis-pwd"`
+	RMQHost     string `envconfig:"rmq_host" default:"localhost"`
+	RMQPort     string `envconfig:"rmq_port" default:"5552"`
+	RMQUser     string `envconfig:"rmq_user" default:"rmq_user"`
+	RMQPassword string `envconfig:"rmq_password" default:"rmq_pwd"`
 }

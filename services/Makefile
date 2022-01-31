@@ -10,7 +10,7 @@ LOT_DOCKER_IMAGE_NAME=nailkabirov/arch-project-lot
 LOT_DOCKER_IMAGE_TAG=v0.0.1
 
 BILLING_DOCKER_IMAGE_NAME=nailkabirov/arch-project-billing
-BILLING_DOCKER_IMAGE_TAG=v0.0.1
+BILLING_DOCKER_IMAGE_TAG=v0.0.2
 
 DELIVERY_DOCKER_IMAGE_NAME=nailkabirov/arch-project-delivery
 DELIVERY_DOCKER_IMAGE_TAG=v0.0.1
@@ -20,6 +20,7 @@ NOTIFICATION_DOCKER_IMAGE_TAG=v0.0.1
 
 APP_NAMES = \
 	auth \
+	billing \
 	user
 
 .PHONY: modules
@@ -27,7 +28,7 @@ modules:
 	go mod tidy
 
 .PHONY: build
-build: modules check build_auth build_billing build_delivery build_lot build_notification build_user
+build: modules check test build_auth build_billing build_delivery build_lot build_notification build_user
 
 .PHONY: build_auth
 build_auth:
@@ -54,8 +55,12 @@ build_billing:
 	docker build -t $(BILLING_DOCKER_IMAGE_NAME):$(BILLING_DOCKER_IMAGE_TAG) -f Billing.Dockerfile .
 
 .PHONY: build_local
-build_local: modules check
+build_local: modules check test
 	$(foreach name, $(APP_NAMES), CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o ./bin/$(name) ./cmd/$(name)/;)
+
+.PHONY: test
+test:
+	go test ./...
 
 .PHONY: clean
 clean:

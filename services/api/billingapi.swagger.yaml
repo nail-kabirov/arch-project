@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Billing Service
+servers:
+  - description: Default Host URL
+    url: http://arch.homework/billing
+tags:
+  - name: billing
+    description: Billing operations
+paths:
+  /api/v1/account:
+    get:
+      tags:
+        - billing
+      summary: account status
+      operationId: accountStatus
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountStatus'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - billing
+      summary: top up an account
+      operationId: topUpAccount
+      responses:
+        '200':
+          description: successfull response
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already processed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopUpData'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+
+  /internal/api/v1/payment:
+    post:
+      tags:
+        - billing
+      summary: process payment
+      operationId: processPayment
+      responses:
+        '200':
+          description: successfull response
+        '400':
+          description: rejected response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already processed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentData'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+components:
+  schemas:
+    AccountStatus:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          type: number
+          multipleOf: 0.01
+          minimum: 0
+        blockedAmount:
+          type: number
+          multipleOf: 0.01
+          minimum: 0
+    Amount:
+      type: number
+      multipleOf: 0.01
+      minimum: 0.01
+    TopUpData:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+    PaymentData:
+      type: object
+      required:
+        - userId
+        - lotId
+        - amount
+      properties:
+        userId:
+          type: string
+          format: uuid
+        lotId:
+          type: string
+          format: uuid
+        amount:
+          $ref: '#/components/schemas/Amount'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
