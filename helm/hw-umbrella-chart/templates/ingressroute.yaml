@@ -35,3 +35,14 @@ spec:
           namespace: {{ .Release.Namespace }}
         - name: authentication
           namespace: {{ .Release.Namespace }}
+    - kind: Rule
+      match: PathPrefix(`/billing/api/`)
+      services:
+        - name: {{ index .Values "billing-app-chart" "fullnameOverride" }}
+          namespace: {{ .Release.Namespace }}
+          port: {{ index .Values "billing-app-chart" "service" "port" }}
+      middlewares:
+        - name: strip-service-prefixes
+          namespace: {{ .Release.Namespace }}
+        - name: authentication
+          namespace: {{ .Release.Namespace }}

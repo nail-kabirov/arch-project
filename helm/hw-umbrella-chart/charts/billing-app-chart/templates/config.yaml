@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config.configMapName }}
+data:
+  DB_HOST: "{{ include "postgresql.svcname" . }}"
+  DB_PORT: "{{ .Values.postgresql.servicePort }}"
+  DB_NAME: "{{ .Values.postgresql.postgresqlDatabase }}"
+  DB_USER: "{{ .Values.postgresql.postgresqlUsername }}"
+  RMQ_HOST: "{{ include "rabbitmq.svcname" . }}"
+  RMQ_PORT: "{{ .Values.rabbitmq.port }}"
+  RMQ_USER: "{{ .Values.rabbitmq.user }}"
+  RMQ_PASSWORD: "{{ .Values.rabbitmq.password }}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.config.secretName }}
+type: Opaque
+data:
+  DB_PASSWORD: {{ .Values.postgresql.postgresqlPassword | b64enc | quote }}
