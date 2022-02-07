@@ -12,6 +12,7 @@ import (
 
 const (
 	jsonContentType = "application/json"
+	requestIDHeader = "X-Request-ID"
 )
 
 type HTTPError struct {
@@ -28,7 +29,7 @@ func NewClient(client http.Client, host string) Client {
 }
 
 type Client interface {
-	MakeJSONRequest(request, response interface{}, method, reqURL string) error
+	MakeJSONRequest(request, response interface{}, method, reqURL string, requestID *string) error
 }
 
 type httpClient struct {
@@ -36,7 +37,7 @@ type httpClient struct {
 	host   string
 }
 
-func (client *httpClient) MakeJSONRequest(request, response interface{}, method, reqURL string) error {
+func (client *httpClient) MakeJSONRequest(request, response interface{}, method, reqURL string, requestID *string) error {
 	var bodyReader io.Reader
 	if request != nil {
 		body, err := json.Marshal(request)
@@ -45,7 +46,7 @@ func (client *httpClient) MakeJSONRequest(request, response interface{}, method,
 		}
 		bodyReader = bytes.NewReader(body)
 	}
-	resBody, err := client.makeRequest(bodyReader, jsonContentType, method, reqURL)
+	resBody, err := client.makeRequest(bodyReader, jsonContentType, method, reqURL, requestID)
 	if err != nil {
 		return err
 	}
@@ -56,13 +57,16 @@ func (client *httpClient) MakeJSONRequest(request, response interface{}, method,
 	return nil
 }
 
-func (client *httpClient) makeRequest(bodyReader io.Reader, contentType, method, reqURL string) ([]byte, error) {
+func (client *httpClient) makeRequest(bodyReader io.Reader, contentType, method, reqURL string, requestID *string) ([]byte, error) {
 	req, err := http.NewRequest(method, client.host+reqURL, bodyReader)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	if bodyReader != nil {
 		req.Header.Set("Content-Type", contentType)
+	}
+	if requestID != nil {
+		req.Header.Set(requestIDHeader, *requestID)
 	}
 
 	res, err := client.client.Do(req)

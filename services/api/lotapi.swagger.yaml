@@ -1,0 +1,387 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Lot Service
+servers:
+  - description: Default Host URL
+    url: http://arch.homework/lot
+tags:
+  - name: lot
+    description: Lot operations
+  - name: bid
+    description: Bid operations
+paths:
+  /api/v1/lot/{lotId}:
+    parameters:
+      - name: lotId
+        in: path
+        description: ID of lot
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - lot
+      summary: information about lot
+      operationId: lotInfo
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotInfo'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /internal/api/v1/lot/{lotId}:
+    parameters:
+      - name: lotId
+        in: path
+        description: ID of lot
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - lot
+      summary: internal information about lot
+      operationId: internalLotInfo
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotInfo'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/lots:
+    parameters:
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: search lots by description
+      - in: query
+        name: participation
+        schema:
+          type: integer
+          enum: [0, 1]
+        description: show only lots with the current user participation
+      - in: query
+        name: win
+        schema:
+          type: integer
+          enum: [0, 1]
+        description: show only lots won by the current user
+    get:
+      tags:
+        - lot
+      summary: information about available lots
+      operationId: lotsInfo
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotsInfo'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/lots/my:
+    get:
+      tags:
+        - lot
+      summary: information about lots created by the current user
+      operationId: myLotsInfo
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotsExInfo'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/lot:
+    post:
+      tags:
+        - lot
+      summary: create new lot
+      operationId: createLot
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    $ref: '#/components/schemas/LotId'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already processed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotData'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+  /api/v1/lot/{lotId}/bid:
+    parameters:
+      - name: lotId
+        in: path
+        description: ID of lot
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+        - bid
+      summary: create new bid
+      operationId: createBid
+      responses:
+        '200':
+          description: successfull response
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already processed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidData'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+components:
+  schemas:
+    LotId:
+      type: string
+      format: uuid
+    LotInfo:
+      type: object
+      required:
+        - id
+        - description
+        - endTime
+        - startPrice
+        - status
+        - ownerLogin
+        - creationDate
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        endTime:
+          type: string
+          format: date-time
+        startPrice:
+          $ref: '#/components/schemas/Amount'
+        buyItNowPrice:
+          $ref: '#/components/schemas/Amount'
+        status:
+          $ref: '#/components/schemas/LotStatus'
+        ownerId:
+          type: string
+          format: uuid
+        ownerLogin:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+        lastBidAmount:
+          $ref: '#/components/schemas/Amount'
+        lastBidderId:
+          type: string
+          format: uuid
+    LotExInfo:
+      type: object
+      required:
+        - id
+        - description
+        - endTime
+        - startPrice
+        - status
+        - creationDate
+        - bids
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        endTime:
+          type: string
+          format: date-time
+        startPrice:
+          $ref: '#/components/schemas/Amount'
+        buyItNowPrice:
+          $ref: '#/components/schemas/Amount'
+        status:
+          $ref: '#/components/schemas/LotStatus'
+        creationDate:
+          type: string
+          format: date-time
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/BidInfo'
+    LotsInfo:
+      type: array
+      items:
+        $ref: '#/components/schemas/LotInfo'
+    LotsExInfo:
+      type: array
+      items:
+        $ref: '#/components/schemas/LotExInfo'
+    BidInfo:
+      type: object
+      required:
+        - userId
+        - userLogin
+        - amount
+        - creationDate
+      properties:
+        userId:
+          type: string
+          format: uuid
+        userLogin:
+          type: string
+        amount:
+          $ref: '#/components/schemas/Amount'
+        creationDate:
+          type: string
+          format: date-time
+    Amount:
+      type: number
+      multipleOf: 0.01
+      minimum: 0.01
+    LotStatus:
+      type: string
+      enum:
+        ["active", "closed", "finished", "sent", "received"]
+    LotData:
+      type: object
+      required:
+        - description
+        - endTime
+        - startPrice
+      properties:
+        description:
+          type: string
+        endTime:
+          type: string
+          format: date-time
+        startPrice:
+          $ref: '#/components/schemas/Amount'
+        buyItNowPrice:
+          $ref: '#/components/schemas/Amount'
+    BidData:
+      type: object
+      required:
+        - amount
+      properties:
+        amount:
+          $ref: '#/components/schemas/Amount'
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

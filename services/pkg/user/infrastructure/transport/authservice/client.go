@@ -29,7 +29,7 @@ func (c *authServiceClient) RegisterUser(login, password string) (app.UserID, er
 		Password: password,
 	}
 	response := registerUserResponse{}
-	err := c.httpClient.MakeJSONRequest(request, &response, http.MethodPost, registerUserURL)
+	err := c.httpClient.MakeJSONRequest(request, &response, http.MethodPost, registerUserURL, nil)
 	if err != nil {
 		if e, ok := errors.Cause(err).(*httpclient.HTTPError); ok {
 			errInfo := errorInfo{}
@@ -49,7 +49,7 @@ func (c *authServiceClient) RegisterUser(login, password string) (app.UserID, er
 
 func (c *authServiceClient) RemoveUser(userID app.UserID) error {
 	url := fmt.Sprintf(removeUserURLTemplate, string(userID))
-	err := c.httpClient.MakeJSONRequest(nil, nil, http.MethodDelete, url)
+	err := c.httpClient.MakeJSONRequest(nil, nil, http.MethodDelete, url, nil)
 	return errors.WithStack(err)
 }
 
