@@ -46,3 +46,14 @@ spec:
           namespace: {{ .Release.Namespace }}
         - name: authentication
           namespace: {{ .Release.Namespace }}
+    - kind: Rule
+      match: PathPrefix(`/lot/api/`)
+      services:
+        - name: {{ index .Values "lot-app-chart" "fullnameOverride" }}
+          namespace: {{ .Release.Namespace }}
+          port: {{ index .Values "lot-app-chart" "service" "port" }}
+      middlewares:
+        - name: strip-service-prefixes
+          namespace: {{ .Release.Namespace }}
+        - name: authentication
+          namespace: {{ .Release.Namespace }}
