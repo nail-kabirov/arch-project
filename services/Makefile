@@ -21,6 +21,7 @@ NOTIFICATION_DOCKER_IMAGE_TAG=v0.0.1
 APP_NAMES = \
 	auth \
 	billing \
+	delivery \
 	lot \
 	user
 

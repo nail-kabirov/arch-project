@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Delivery Service
+servers:
+  - description: Default Host URL
+    url: http://arch.homework/delivery
+tags:
+  - name: delivery
+    description: Delivery operations
+paths:
+  /api/v1/lot/{lotId}/delivery:
+    parameters:
+      - name: lotId
+        in: path
+        description: ID of lot
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - delivery
+      summary: lot delivery information
+      operationId: lotDelivery
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LotDeliveryInfo'
+        '404':
+          description: lot delivery information not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/lot/sent:
+    post:
+      tags:
+        - delivery
+      summary: update lot delivery information (lot sent)
+      operationId: lotSent
+      responses:
+        '200':
+          description: successfull response
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already processed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotSentData'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+  /api/v1/lot/received:
+    post:
+      tags:
+        - delivery
+      summary: update lot delivery information (lot received)
+      operationId: lotReceived
+      responses:
+        '200':
+          description: successfull response
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already processed response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LotReceivedData'
+        required: true
+      parameters:
+        - in: header
+          name: X-Request-ID
+          schema:
+            type: string
+            format: uuid
+          required: true
+
+components:
+  schemas:
+    LotDeliveryInfo:
+      type: object
+      required:
+        - id
+        - status
+        - sender
+        - receiver
+        - trackingId
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum:
+            ["finished", "sent", "received"]
+        sender:
+          $ref: '#/components/schemas/SenderInfo'
+        receiver:
+          $ref: '#/components/schemas/ReceiverInfo'
+        trackingId:
+          type: string
+    SenderInfo:
+      type: object
+      required:
+        - login
+        - firstName
+        - lastName
+      properties:
+        login:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+    ReceiverInfo:
+      type: object
+      required:
+        - login
+        - firstName
+        - lastName
+        - address
+      properties:
+        login:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        address:
+          type: string
+    LotSentData:
+      type: object
+      required:
+        - id
+        - trackingId
+      properties:
+        id:
+          type: string
+          format: uuid
+        trackingId:
+          type: string
+    LotReceivedData:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

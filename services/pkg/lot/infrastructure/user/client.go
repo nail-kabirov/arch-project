@@ -31,7 +31,7 @@ func (c *userClient) GetUserLogin(userID app.UserID) (string, error) {
 	var response userProfileResponse
 	err := c.httpClient.MakeJSONRequest(nil, &response, http.MethodGet, requestURL, nil)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	c.userLoginMap[userID] = response.Login
 	return response.Login, nil
