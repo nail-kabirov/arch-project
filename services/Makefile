@@ -23,6 +23,7 @@ APP_NAMES = \
 	billing \
 	delivery \
 	lot \
+	notification \
 	user
 
 .PHONY: modules

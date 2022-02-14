@@ -1,0 +1,80 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Notification Service
+servers:
+  - description: Default Host URL
+    url: http://arch.homework/notification
+tags:
+  - name: notifications
+    description: Notifications operations
+paths:
+  /api/v1/notifications:
+    get:
+      tags:
+        - notifications
+      summary: get user notifications
+      operationId: getNotifications
+      responses:
+        '200':
+          description: successfull response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notifications'
+        '403':
+          description: forbidden response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Notifications:
+      type: array
+      items:
+        $ref: '#/components/schemas/Notification'
+    Notification:
+      type: object
+      required:
+        - type
+        - message
+        - creationDate
+      properties:
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        lotId:
+          type: string
+          format: uuid
+        message:
+          type: string
+        creationDate:
+          type: string
+          format: date-time
+    NotificationType:
+      type: string
+      enum:
+        - "lotFinished"
+        - "lotClosed"
+        - "lotWon"
+        - "lotSent"
+        - "lotReceived"
+        - "bidOutbid"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
