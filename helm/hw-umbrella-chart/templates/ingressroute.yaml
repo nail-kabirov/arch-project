@@ -68,3 +68,14 @@ spec:
           namespace: {{ .Release.Namespace }}
         - name: authentication
           namespace: {{ .Release.Namespace }}
+    - kind: Rule
+      match: PathPrefix(`/notification/api/`)
+      services:
+        - name: {{ index .Values "notification-app-chart" "fullnameOverride" }}
+          namespace: {{ .Release.Namespace }}
+          port: {{ index .Values "notification-app-chart" "service" "port" }}
+      middlewares:
+        - name: strip-service-prefixes
+          namespace: {{ .Release.Namespace }}
+        - name: authentication
+          namespace: {{ .Release.Namespace }}
