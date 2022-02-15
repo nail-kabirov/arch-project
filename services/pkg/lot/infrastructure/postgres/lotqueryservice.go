@@ -53,7 +53,7 @@ func (s *lotQueryService) Get(lotID app.LotID) (*app.LotQueryData, error) {
 	return &res, err
 }
 
-func (s *lotQueryService) FindAvailable(userID app.UserID, searchString *string, withParticipationOnly bool, wonOnly bool) ([]app.LotQueryData, error) {
+func (s *lotQueryService) FindAvailable(userID app.UserID, createdAfter *time.Time, searchString *string, withParticipationOnly bool, wonOnly bool) ([]app.LotQueryData, error) {
 	const sqlQuery = `
 			SELECT l.id,
 				   l.owner_id,
@@ -90,6 +90,10 @@ func (s *lotQueryService) FindAvailable(userID app.UserID, searchString *string,
 	if wonOnly {
 		conditions = append(conditions, "b.user_id = ?")
 		params = append(params, string(userID))
+	}
+	if createdAfter != nil {
+		conditions = append(conditions, "l.created_at > ?")
+		params = append(params, *createdAfter)
 	}
 	if searchString != nil {
 		searchStr := "%" + strings.ReplaceAll(*searchString, "%", "\\%") + "%"

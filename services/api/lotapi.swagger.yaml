@@ -80,6 +80,12 @@ paths:
   /api/v1/lots:
     parameters:
       - in: query
+        name: createdAfter
+        schema:
+          type: string
+          format: date-time
+        description: show only lots created after specified date-time
+      - in: query
         name: search
         schema:
           type: string

@@ -186,11 +186,19 @@ func (s *Server) findLotsHandler(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
+	var createdAfter *time.Time
 	var searchString *string
 	withParticipationOnly := false
 	wonOnly := false
 
 	query := r.URL.Query()
+	if after := query.Get("createdAfter"); after != "" {
+		afterTime, err := time.Parse(time.RFC3339, after)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		createdAfter = &afterTime
+	}
 	if search := query.Get("search"); search != "" {
 		searchString = &search
 	}
@@ -201,7 +209,7 @@ func (s *Server) findLotsHandler(w http.ResponseWriter, r *http.Request) error {
 		wonOnly = true
 	}
 
-	lots, err := s.lotQueryService.FindAvailable(app.UserID(tokenData.UserID()), searchString, withParticipationOnly, wonOnly)
+	lots, err := s.lotQueryService.FindAvailable(app.UserID(tokenData.UserID()), createdAfter, searchString, withParticipationOnly, wonOnly)
 	if err != nil {
 		return err
 	}
