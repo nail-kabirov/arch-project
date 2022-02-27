@@ -37,7 +37,7 @@ func (repo *userAccountEventRepository) Store(event *app.UserAccountEvent) error
 }
 
 func (repo *userAccountEventRepository) FindAllByUserID(id app.UserID) ([]app.UserAccountEvent, error) {
-	const query = `SELECT user_id, lot_id, event_type, amount FROM user_account_event WHERE user_id = $1`
+	const query = `SELECT user_id, lot_id, event_type, amount FROM user_account_event WHERE user_id = $1 ORDER BY id`
 
 	var events []*sqlxUserAccountEvent
 	err := repo.client.Select(&events, query, string(id))

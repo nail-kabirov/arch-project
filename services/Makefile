@@ -10,7 +10,7 @@ LOT_DOCKER_IMAGE_NAME=nailkabirov/arch-project-lot
 LOT_DOCKER_IMAGE_TAG=v0.0.4
 
 BILLING_DOCKER_IMAGE_NAME=nailkabirov/arch-project-billing
-BILLING_DOCKER_IMAGE_TAG=v0.0.2
+BILLING_DOCKER_IMAGE_TAG=v0.0.3
 
 DELIVERY_DOCKER_IMAGE_NAME=nailkabirov/arch-project-delivery
 DELIVERY_DOCKER_IMAGE_TAG=v0.0.1
