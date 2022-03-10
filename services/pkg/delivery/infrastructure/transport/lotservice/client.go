@@ -29,7 +29,7 @@ func (c *lotServiceClient) FindFinishedLotInfo(id app.LotID) (*app.LotInfo, erro
 		return nil, err
 	}
 	if response.Status != string(app.LotStatusFinished) {
-		return nil, nil
+		return nil, errors.WithStack(app.ErrInvalidLotStatus)
 	}
 
 	if err = uuid.ValidateUUID(response.ID); err != nil {
