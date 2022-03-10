@@ -7,7 +7,7 @@ USER_DOCKER_IMAGE_NAME=nailkabirov/arch-project-user
 USER_DOCKER_IMAGE_TAG=v0.0.1
 
 LOT_DOCKER_IMAGE_NAME=nailkabirov/arch-project-lot
-LOT_DOCKER_IMAGE_TAG=v0.0.4
+LOT_DOCKER_IMAGE_TAG=v0.0.5
 
 BILLING_DOCKER_IMAGE_NAME=nailkabirov/arch-project-billing
 BILLING_DOCKER_IMAGE_TAG=v0.0.3

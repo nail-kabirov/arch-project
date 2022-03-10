@@ -42,7 +42,9 @@ func (handler *eventHandler) Handle(event integrationevent.EventData) error {
 		return err
 	}
 
-	return handler.executeInTransaction(func(trUnit TransactionalUnit) error {
+	handled := true
+
+	err = handler.executeInTransaction(func(trUnit TransactionalUnit) error {
 		requestRepo := trUnit.ProcessedEventRepository()
 		alreadyProcessed, err := requestRepo.SetEventProcessed(event.UID)
 		if err != nil {
@@ -60,9 +62,14 @@ func (handler *eventHandler) Handle(event integrationevent.EventData) error {
 		case deliveryLotReceivedEvent:
 			return service.SetLotReceived(e.lotID)
 		default:
+			handled = false
 			return nil
 		}
 	})
+	if err == nil && handled {
+		handler.eventSender.SendStoredEvents()
+	}
+	return err
 }
 
 func (handler *eventHandler) executeInTransaction(f func(TransactionalUnit) error) (err error) {

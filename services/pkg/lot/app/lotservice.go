@@ -173,7 +173,7 @@ func (s *lotService) CreateBid(requestID RequestID, userID UserID, lotID LotID, 
 }
 
 func (s *lotService) SetLotSent(lotID LotID) error {
-	err := s.executeInTransactionWithLock(lotLockName(lotID), func(provider RepositoryProvider) error {
+	return s.executeInTransactionWithLock(lotLockName(lotID), func(provider RepositoryProvider) error {
 		lotRepo := provider.LotRepository()
 		lot, err := lotRepo.FindByID(lotID)
 		if err != nil {
@@ -199,15 +199,10 @@ func (s *lotService) SetLotSent(lotID LotID) error {
 		lot.Status = LotStatusSent
 		return lotRepo.Store(lot)
 	})
-	if err != nil {
-		return err
-	}
-	s.eventSender.SendStoredEvents()
-	return nil
 }
 
 func (s *lotService) SetLotReceived(lotID LotID) error {
-	err := s.executeInTransactionWithLock(lotLockName(lotID), func(provider RepositoryProvider) error {
+	return s.executeInTransactionWithLock(lotLockName(lotID), func(provider RepositoryProvider) error {
 		lotRepo := provider.LotRepository()
 		lot, err := lotRepo.FindByID(lotID)
 		if err != nil {
@@ -233,11 +228,6 @@ func (s *lotService) SetLotReceived(lotID LotID) error {
 		lot.Status = LotStatusReceived
 		return lotRepo.Store(lot)
 	})
-	if err != nil {
-		return err
-	}
-	s.eventSender.SendStoredEvents()
-	return nil
 }
 
 func (s *lotService) ProcessCompletedLots() error {
