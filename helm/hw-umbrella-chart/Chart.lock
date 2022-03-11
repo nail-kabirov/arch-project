@@ -4,12 +4,12 @@ dependencies:
   version: 10.16.2
 - name: traefik
   repository: https://helm.traefik.io/traefik
-  version: 10.9.1
+  version: 10.15.0
 - name: rabbitmq
   repository: https://charts.bitnami.com/bitnami
-  version: 8.27.0
+  version: 8.30.0
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 15.7.6
-digest: sha256:c4ea0d88ea571d20036beaf7a2d53c02fd3dd01892935c352e952fad171dfec1
-generated: "2022-01-29T10:41:27.291815674+03:00"
+digest: sha256:c4be7a2c718de7acde0a1002a5c1de234c4580c22e4a2e81572f9f9b68d419cf
+generated: "2022-03-11T12:08:03.661786654+03:00"
