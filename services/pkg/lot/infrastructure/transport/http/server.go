@@ -62,9 +62,14 @@ type endpointLabelCollector struct {
 
 func (e endpointLabelCollector) EndpointLabelForURI(uri string) string {
 	if strings.HasPrefix(uri, PathPrefix) {
-		r, _ := regexp.Compile("^" + PathPrefix + "lot/[a-f0-9-]+$")
-		if r.MatchString(uri) {
+		if r, _ := regexp.Compile("^" + PathPrefix + "lot/[a-f0-9-]+/bid$"); r.MatchString(uri) {
+			return createBidEndpoint
+		}
+		if r, _ := regexp.Compile("^" + PathPrefix + "lot/[a-f0-9-]+$"); r.MatchString(uri) {
 			return specificLotEndpoint
+		}
+		if r, _ := regexp.Compile("^" + PathPrefix + "lots[?]"); r.MatchString(uri) {
+			return lotsEndpoint
 		}
 	} else if strings.HasPrefix(uri, PathPrefixInternal) {
 		r, _ := regexp.Compile("^" + PathPrefixInternal + "lot/[a-f0-9-]+$")
