@@ -58,7 +58,7 @@ rabbitmq:
 
 metrics:
   serviceMonitor:
-    enabled: false
+    enabled: true
 
 init_migrations_job:
   name: user-migration-v1-job

@@ -26,7 +26,7 @@ traefik:
       enabled: true
   ingressRoute:
     dashboard:
-      enabled: false
+      enabled: true
 #  securityContext:
 #    runAsNonRoot: false
 
@@ -37,7 +37,7 @@ postgresql:
   metrics:
     enabled: false
     serviceMonitor:
-      enabled: false
+      enabled: true
 
 rabbitmq:
   auth:
@@ -62,7 +62,7 @@ redis:
   metrics:
     enabled: true
     serviceMonitor:
-      enabled: false
+      enabled: true
 
 auth-app-chart:
   postgresql:

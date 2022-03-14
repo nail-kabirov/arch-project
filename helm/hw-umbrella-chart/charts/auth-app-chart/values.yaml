@@ -57,7 +57,7 @@ redis:
 
 metrics:
   serviceMonitor:
-    enabled: false
+    enabled: true
 
 init_migrations_job:
   name: auth-migration-v1-job
